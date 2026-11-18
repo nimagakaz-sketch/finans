@@ -78,13 +78,18 @@ if (FRONTEND_DIR / "css").exists():
 if (FRONTEND_DIR / "js").exists():
     app.mount("/js", StaticFiles(directory=FRONTEND_DIR / "js"), name="js")
 
-@app.get("/")
-@app.get("/webapp")
+@app.api_route("/", methods=["GET", "HEAD"])
+@app.api_route("/webapp", methods=["GET", "HEAD"])
 async def serve_index():
     index_path = FRONTEND_DIR / "index.html"
     if index_path.exists():
         return FileResponse(index_path)
     return HTMLResponse("<h1>Family Finance Tracker</h1>")
+
+@app.api_route("/health", methods=["GET", "HEAD"])
+@app.api_route("/ping", methods=["GET", "HEAD"])
+async def health_check():
+    return {"status": "ok"}
 
 if __name__ == "__main__":
     import uvicorn
