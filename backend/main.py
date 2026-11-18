@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.config import HOST, PORT, BOT_TOKEN, UPLOAD_DIR, BASE_DIR
 from backend.database import init_db
 from backend.routes.expenses import router as expenses_router
+from backend.routes.incomes import router as incomes_router
 from backend.routes.analytics import router as analytics_router
 from backend.routes.shortcuts import router as shortcuts_router
 from backend.routes.family import router as family_router
@@ -62,6 +63,7 @@ app.add_middleware(
 
 # Include Routers
 app.include_router(expenses_router)
+app.include_router(incomes_router)
 app.include_router(analytics_router)
 app.include_router(shortcuts_router)
 app.include_router(family_router)

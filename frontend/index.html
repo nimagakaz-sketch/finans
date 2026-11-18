@@ -14,6 +14,7 @@
   --green: #34c759;
   --orange: #ff9500;
   --purple: #af52de;
+  --red: #ff3b30;
   --top: calc(max(env(safe-area-inset-top, 0px), var(--tg-safe-area-inset-top, 0px)) + var(--tg-content-safe-area-inset-top, 0px));
   --pl: max(16px, env(safe-area-inset-left, 0px));
   --pr: max(16px, env(safe-area-inset-right, 0px));
@@ -235,7 +236,7 @@ html, body {
   margin-bottom: 20px;
 }
 .top-header h1 {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: -.02em;
 }
@@ -285,7 +286,7 @@ html, body {
   overflow-x: auto;
   scrollbar-width: none;
   padding-bottom: 6px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 .chips-row::-webkit-scrollbar { display: none; }
 .chip {
@@ -294,7 +295,7 @@ html, body {
   background: rgba(45, 45, 48, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #a8a8ae;
   cursor: pointer;
@@ -306,19 +307,25 @@ html, body {
   border-color: #3a8bf7;
   box-shadow: 0 4px 14px rgba(58, 139, 247, 0.4);
 }
+.chip.active-green {
+  background: #34c759;
+  color: #fff;
+  border-color: #34c759;
+  box-shadow: 0 4px 14px rgba(52, 199, 89, 0.4);
+}
 
-/* Expense item row */
+/* Item rows */
 .exp-item {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   padding: 14px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 .exp-item:last-child { border-bottom: none; }
 .exp-icon {
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -327,8 +334,12 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.12);
   flex: none;
 }
+.exp-icon.is-income {
+  background: rgba(52, 199, 89, 0.15);
+  border-color: rgba(52, 199, 89, 0.35);
+}
 .exp-info { flex: 1; min-width: 0; }
-.exp-title { font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exp-title { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .exp-sub {
   display: flex;
   align-items: center;
@@ -361,28 +372,52 @@ html, body {
   cursor: pointer;
 }
 
+.exp-amount-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .exp-amount {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: -.02em;
   white-space: nowrap;
 }
+.exp-amount.green { color: #34c759; }
 
-/* Analytics Hero & Bars */
-.stat-hero {
+.del-btn {
+  all: unset;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: #ff3b30;
+  opacity: .55;
+  transition: opacity .15s, background .15s;
+}
+.del-btn:hover, .del-btn:active { opacity: 1; background: rgba(255, 59, 48, .15); }
+
+/* Analytics Cashflow Hero */
+.cashflow-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
   text-align: center;
-  padding: 10px 0 16px;
 }
-.stat-hero .val {
-  font-size: 44px;
-  font-weight: 800;
-  letter-spacing: -.03em;
-  background: linear-gradient(135deg, #ffffff 40%, #a8a8ae 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.cf-box {
+  background: rgba(255, 255, 255, .05);
+  border-radius: 18px;
+  padding: 12px 6px;
+  border: 1px solid rgba(255, 255, 255, .08);
 }
-.stat-hero .lbl { font-size: 15px; color: #8e8e93; margin-top: 4px; }
+.cf-lbl { font-size: 12px; font-weight: 600; color: #8e8e93; margin-bottom: 4px; }
+.cf-val { font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
+.cf-val.green { color: #34c759; }
+.cf-val.red { color: #ff5a8a; }
+.cf-val.blue { color: #4da3ff; }
 
 .prog-track {
   height: 10px;
@@ -400,7 +435,7 @@ html, body {
   align-items: center;
   margin-bottom: 8px;
 }
-.versus-user { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 16px; }
+.versus-user { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; }
 .versus-dot { width: 10px; height: 10px; border-radius: 50%; }
 
 .split-box {
@@ -409,21 +444,20 @@ html, body {
   border-radius: 20px;
   padding: 16px;
   text-align: center;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   color: #fff;
   line-height: 1.4;
 }
 
-/* Category progress items */
-.cat-stat-item { margin-bottom: 14px; }
-.cat-stat-head { display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.cat-stat-item { margin-bottom: 12px; }
+.cat-stat-head { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
 
 /* Modals */
 .scrim {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.7);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   z-index: 50;
@@ -446,7 +480,7 @@ html, body {
   box-shadow: 0 20px 60px rgba(0, 0, 0, .8);
   transform: translateY(120%);
   transition: transform .35s cubic-bezier(.2, 1.3, .35, 1);
-  max-height: 85vh;
+  max-height: 88vh;
   overflow-y: auto;
 }
 .modal.on { transform: translateY(0); }
@@ -455,9 +489,9 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
-.modal-header h3 { font-size: 22px; font-weight: 700; }
+.modal-header h3 { font-size: 20px; font-weight: 700; }
 .close-btn {
   all: unset;
   width: 32px;
@@ -470,9 +504,40 @@ html, body {
   color: #a8a8ae;
 }
 
+/* Modal Segments: Expense vs Income */
+.type-seg {
+  display: flex;
+  background: rgba(255, 255, 255, .08);
+  border-radius: 999px;
+  padding: 3px;
+  margin-bottom: 18px;
+}
+.seg-btn {
+  flex: 1;
+  all: unset;
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+  color: #a8a8ae;
+}
+.seg-btn.active-exp {
+  background: #ff5a8a;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(255, 90, 138, .4);
+}
+.seg-btn.active-inc {
+  background: #34c759;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(52, 199, 89, .4);
+}
+
 .num-input-wrap {
   position: relative;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 .num-input {
   width: 100%;
@@ -492,17 +557,17 @@ html, body {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
 }
 .q-btn {
   all: unset;
   padding: 6px 14px;
   background: rgba(255, 255, 255, .08);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background .15s;
 }
 .q-btn:active { background: rgba(255, 255, 255, .2); }
 
@@ -510,11 +575,11 @@ html, body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 .cat-sel-btn {
   all: unset;
-  padding: 10px 8px;
+  padding: 10px 6px;
   background: rgba(255, 255, 255, .06);
   border: 1px solid rgba(255, 255, 255, .08);
   border-radius: 16px;
@@ -522,7 +587,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   text-align: center;
@@ -532,34 +597,40 @@ html, body {
   border-color: #3a8bf7;
   color: #fff;
 }
+.cat-sel-btn.active-green {
+  background: rgba(52, 199, 89, 0.25);
+  border-color: #34c759;
+  color: #fff;
+}
 .cat-sel-btn .c-ico { font-size: 20px; }
 
 .text-field {
   width: 100%;
   background: rgba(255, 255, 255, .07);
   border: 1px solid rgba(255, 255, 255, .15);
-  border-radius: 18px;
-  padding: 14px 18px;
-  font-size: 16px;
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-size: 15px;
   color: #fff;
   outline: none;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
+.text-field:focus { border-color: var(--blue); }
 
 .payer-toggle {
   display: flex;
   background: rgba(255, 255, 255, .08);
   border-radius: 999px;
   padding: 3px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 .p-btn {
   flex: 1;
   all: unset;
   text-align: center;
-  padding: 10px 0;
+  padding: 9px 0;
   border-radius: 999px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all .2s;
@@ -573,14 +644,12 @@ html, body {
 
 .receipt-upload-box {
   border: 2px dashed rgba(255, 255, 255, .18);
-  border-radius: 20px;
-  padding: 16px;
+  border-radius: 18px;
+  padding: 14px;
   text-align: center;
   cursor: pointer;
-  margin-bottom: 20px;
-  transition: border-color .2s;
+  margin-bottom: 18px;
 }
-.receipt-upload-box:hover { border-color: var(--blue); }
 .receipt-upload-box.has-img { border-style: solid; border-color: var(--green); }
 
 .save-btn {
@@ -588,18 +657,19 @@ html, body {
   all: unset;
   background: linear-gradient(135deg, #3a8bf7, #2b55d6);
   color: #fff;
-  padding: 16px 0;
+  padding: 15px 0;
   border-radius: 999px;
   text-align: center;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(58, 139, 247, .45);
-  transition: transform .15s, opacity .15s;
 }
-.save-btn:active { transform: scale(.97); opacity: .9; }
+.save-btn.is-income {
+  background: linear-gradient(135deg, #34c759, #248a3d);
+  box-shadow: 0 8px 24px rgba(52, 199, 89, .45);
+}
 
-/* iOS Shortcuts Guide Cards */
 .code-box {
   background: #111;
   border: 1px solid rgba(255, 255, 255, .1);
@@ -622,32 +692,22 @@ html, body {
   color: #4da3ff;
   border: 1px solid rgba(58, 139, 247, 0.4);
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 }
-.copy-btn:active { background: rgba(58, 139, 247, 0.35); }
+.copy-btn.red {
+  background: rgba(255, 59, 48, 0.18);
+  color: #ff3b30;
+  border-color: rgba(255, 59, 48, 0.4);
+}
 
-.step-card {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 14px;
-  align-items: flex-start;
-}
+.step-card { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
 .step-num {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--blue);
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-size: 14px;
-  font-weight: 700;
-  flex: none;
+  width: 26px; height: 26px; border-radius: 50%; background: var(--blue);
+  color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 700; flex: none;
 }
-.step-text { font-size: 15px; line-height: 1.35; color: #e5e5ea; }
-.step-text strong { color: #fff; }
+.step-text { font-size: 14px; line-height: 1.35; color: #e5e5ea; }
 </style>
 </head>
 <body>
@@ -656,26 +716,34 @@ html, body {
   <i></i><i></i><i></i>
 </div>
 
-<!-- ================= VIEW 0: ТРАТЫ ================= -->
+<!-- ================= VIEW 0: ОПЕРАЦИИ (ТРАТЫ И ДОХОДЫ) ================= -->
 <section class="view on" id="v0">
   <div class="vscroll">
     <div class="top-header">
       <div>
         <div class="family-badge" id="famBadge">Семья Солиловых</div>
-        <h1 style="margin-top: 6px;">Расходы</h1>
+        <h1 style="margin-top: 6px;" id="viewTitle">Операции</h1>
       </div>
       <div id="userBadge" class="family-badge" style="background: rgba(58,139,247,.2); border-color: rgba(58,139,247,.4); color:#4da3ff;">
         👤 Евгений
       </div>
     </div>
 
-    <!-- Filter chips -->
-    <div class="chips-row" id="userChips">
-      <div class="chip active" data-user="all">Все траты</div>
-      <div class="chip" data-user="1">Евгений</div>
-      <div class="chip" data-user="2">Супруга</div>
+    <!-- Type filter chips -->
+    <div class="chips-row" id="typeChips">
+      <div class="chip active" data-type="all">Все записи</div>
+      <div class="chip" data-type="expenses">🔴 Расходы</div>
+      <div class="chip" data-type="incomes">🟢 Приход денег</div>
     </div>
 
+    <!-- Filter chips by user -->
+    <div class="chips-row" id="userChips">
+      <div class="chip active" data-user="all">Все участники</div>
+      <div class="chip" data-user="1" id="u1Chip">Евгений</div>
+      <div class="chip" data-user="2" id="u2Chip">Супруга</div>
+    </div>
+
+    <!-- Category filter chips -->
     <div class="chips-row" id="catChips">
       <div class="chip active" data-cat="all">Все категории</div>
       <div class="chip" data-cat="groceries">🛒 Продукты</div>
@@ -688,15 +756,14 @@ html, body {
       <div class="chip" data-cat="fun">🎁 Развлечения</div>
     </div>
 
-    <!-- Expenses List Card -->
+    <!-- Transaction List Card -->
     <div class="scard">
       <div class="schd">
-        <span id="expCountLabel">История расходов</span>
-        <span id="expSumLabel" style="color: #fff;">0 ₽</span>
+        <span id="transCountLabel">История операций</span>
+        <button class="copy-btn red" id="clearAllExpensesBtn" style="padding: 4px 12px; font-size: 11px;">🗑 Обнулить все</button>
       </div>
-      <div class="scb" id="expensesList">
-        <!-- Rendered dynamically -->
-        <div style="text-align:center; padding: 20px; color: #8e8e93;">Загрузка расходов...</div>
+      <div class="scb" id="transactionsList">
+        <div style="text-align:center; padding: 20px; color: #8e8e93;">Загрузка...</div>
       </div>
     </div>
   </div>
@@ -710,52 +777,64 @@ html, body {
       <div class="family-badge" id="monthBadge">Ноябрь 2026</div>
     </div>
 
-    <!-- Total Budget Hero Card -->
+    <!-- Cashflow Summary Hero Card -->
     <div class="scard">
       <div class="scb">
-        <div class="stat-hero">
-          <div class="val" id="totalSpentHero">0 ₽</div>
-          <div class="lbl" id="budgetLimitHero">из 150 000 ₽ запланированных на месяц</div>
+        <div class="cashflow-grid">
+          <div class="cf-box">
+            <div class="cf-lbl">🟢 Приход</div>
+            <div class="cf-val green" id="heroIncome">0 ₽</div>
+          </div>
+          <div class="cf-box">
+            <div class="cf-lbl">🔴 Расходы</div>
+            <div class="cf-val red" id="heroSpent">0 ₽</div>
+          </div>
+          <div class="cf-box">
+            <div class="cf-lbl">💎 Остаток</div>
+            <div class="cf-val blue" id="heroNet">0 ₽</div>
+          </div>
         </div>
+
+        <div style="font-size:13px; color:#8e8e93; margin-bottom: 4px;" id="budgetLimitHero">Лимит трат: 150 000 ₽</div>
         <div class="prog-track">
           <div class="prog-fill" id="budgetBar" style="width: 0%; background: linear-gradient(90deg, #3a8bf7, #34c759);"></div>
         </div>
-        <div style="display:flex; justify-content:space-between; font-size:13px; color:#8e8e93; margin-top:6px;">
-          <span id="budgetPct">0% бюджета</span>
-          <span id="budgetRemain">Осталось 0 ₽</span>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#8e8e93; margin-top:4px;">
+          <span id="budgetPct">0% лимита</span>
+          <span id="savingsPctBadge">Накопления: 0%</span>
         </div>
       </div>
     </div>
 
-    <!-- Who spent how much (Евгений vs Супруга) -->
+    <!-- Who spent how much (Расходы по супругам) -->
     <div class="scard">
       <div class="schd">
-        <span>Кто сколько потратил</span>
+        <span>Расходы: кто сколько потратил</span>
       </div>
       <div class="scb">
         <div class="versus-row">
           <div class="versus-user">
             <span class="versus-dot" style="background: #3a8bf7;"></span>
-            <span id="u1Name">Евгений</span>
+            <span id="u1SpentName">Евгений</span>
           </div>
-          <div style="font-weight:700; font-size:16px;" id="u1Sum">0 ₽</div>
+          <div style="font-weight:700; font-size:15px;" id="u1SpentSum">0 ₽</div>
         </div>
 
-        <div class="versus-row" style="margin-top: 10px;">
+        <div class="versus-row" style="margin-top: 8px;">
           <div class="versus-user">
             <span class="versus-dot" style="background: #ff5a8a;"></span>
-            <span id="u2Name">Супруга</span>
+            <span id="u2SpentName">Супруга</span>
           </div>
-          <div style="font-weight:700; font-size:16px;" id="u2Sum">0 ₽</div>
+          <div style="font-weight:700; font-size:15px;" id="u2SpentSum">0 ₽</div>
         </div>
 
-        <div class="prog-track" style="height: 14px; margin-top: 14px;">
+        <div class="prog-track" style="height: 12px; margin-top: 10px;">
           <div class="prog-fill" id="u1Bar" style="width: 50%; background: #3a8bf7;"></div>
           <div class="prog-fill" id="u2Bar" style="width: 50%; background: #ff5a8a;"></div>
         </div>
 
         <!-- 50/50 Split Balance -->
-        <div style="margin-top: 18px;" id="splitBoxWrapper">
+        <div style="margin-top: 16px;">
           <div class="split-box" id="splitBoxText">
             Баланс 50/50: подсчет...
           </div>
@@ -763,10 +842,39 @@ html, body {
       </div>
     </div>
 
+    <!-- Income by member (Доходы по супругам) -->
+    <div class="scard">
+      <div class="schd">
+        <span>Приход: доходы по участникам</span>
+      </div>
+      <div class="scb">
+        <div class="versus-row">
+          <div class="versus-user">
+            <span class="versus-dot" style="background: #34c759;"></span>
+            <span id="u1IncName">Евгений</span>
+          </div>
+          <div style="font-weight:700; font-size:15px; color:#34c759;" id="u1IncSum">+0 ₽</div>
+        </div>
+
+        <div class="versus-row" style="margin-top: 8px;">
+          <div class="versus-user">
+            <span class="versus-dot" style="background: #30b0c7;"></span>
+            <span id="u2IncName">Супруга</span>
+          </div>
+          <div style="font-weight:700; font-size:15px; color:#34c759;" id="u2IncSum">+0 ₽</div>
+        </div>
+
+        <div class="prog-track" style="height: 12px; margin-top: 10px;">
+          <div class="prog-fill" id="u1IncBar" style="width: 50%; background: #34c759;"></div>
+          <div class="prog-fill" id="u2IncBar" style="width: 50%; background: #30b0c7;"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Categories Breakdown -->
     <div class="scard">
       <div class="schd">
-        <span>По категориям</span>
+        <span>Расходы по категориям</span>
       </div>
       <div class="scb" id="catAnalyticsList">
         <!-- Rendered dynamically -->
@@ -775,97 +883,122 @@ html, body {
   </div>
 </section>
 
-<!-- ================= VIEW 2: СЕМЬЯ И iOS КОМАНДЫ ================= -->
+<!-- ================= VIEW 2: СЕМЬЯ, ИМЕНА И ТОКЕН ================= -->
 <section class="view" id="v2">
   <div class="vscroll">
     <div class="top-header">
-      <h1>Семья</h1>
+      <h1>Семья и Настройки</h1>
     </div>
 
-    <!-- Family Profiles -->
+    <!-- Edit Family Name -->
     <div class="scard">
       <div class="schd">
-        <span>Участники семьи</span>
+        <span>Название семьи (фамилия)</span>
       </div>
       <div class="scb">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px;">
-          <div style="display:flex; align-items:center; gap: 12px;">
-            <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, #3a8bf7, #2b55d6); display:grid; place-items:center; font-weight:700; font-size:18px;">Е</div>
-            <div>
-              <div style="font-weight:700; font-size:16px;">Евгений</div>
-              <div style="font-size:13px; color:#8e8e93;">Основной аккаунт</div>
-            </div>
-          </div>
-          <span class="family-badge" style="color:#34c759; border-color:rgba(52,199,89,.4);">Активен</span>
-        </div>
-
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-          <div style="display:flex; align-items:center; gap: 12px;">
-            <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, #ff5a8a, #c0408f); display:grid; place-items:center; font-weight:700; font-size:18px;">С</div>
-            <div>
-              <div style="font-weight:700; font-size:16px;">Супруга</div>
-              <div style="font-size:13px; color:#8e8e93;">Совместный бюджет</div>
-            </div>
-          </div>
-          <button class="copy-btn" id="inviteBtn" style="padding: 6px 14px; font-size: 13px;">🔗 Пригласить</button>
+        <div style="display:flex; gap: 8px;">
+          <input type="text" class="text-field" id="editFamNameInput" placeholder="Например: Семья Солиловых" style="margin-bottom:0;">
+          <button class="copy-btn" id="saveFamNameBtn" style="white-space:nowrap;">💾 Сохранить</button>
         </div>
       </div>
     </div>
 
-    <!-- iOS Shortcuts Setup Card -->
-    <div class="scard" style="border: 1px solid rgba(58, 139, 247, 0.4);">
+    <!-- Edit Spouses' Names -->
+    <div class="scard">
       <div class="schd">
-        <span style="color:#4da3ff;">📲 Быстрые команды на iPhone</span>
+        <span>Имена супругов</span>
       </div>
       <div class="scb">
-        <p style="font-size:15px; color:#e5e5ea; line-height:1.4; margin-bottom: 14px;">
-          Нажмите иконку на экране iPhone (или кнопку Action Button), введите сумму и покупку — бот сам отсортирует по категории и уведомит супругу!
+        <!-- Member 1 -->
+        <div style="margin-bottom: 16px;">
+          <div style="font-size:13px; font-weight:600; color:#8e8e93; margin-bottom:6px;">СУПРУГ 1:</div>
+          <div style="display:flex; gap: 8px;">
+            <input type="text" class="text-field" id="editM1Name" placeholder="Имя" style="margin-bottom:0;">
+            <button class="copy-btn" id="saveM1Btn" style="white-space:nowrap;">💾 Изменить</button>
+          </div>
+        </div>
+
+        <!-- Member 2 -->
+        <div>
+          <div style="font-size:13px; font-weight:600; color:#8e8e93; margin-bottom:6px;">СУПРУГ(А) 2:</div>
+          <div style="display:flex; gap: 8px;">
+            <input type="text" class="text-field" id="editM2Name" placeholder="Имя супруги" style="margin-bottom:0;">
+            <button class="copy-btn" id="saveM2Btn" style="white-space:nowrap;">💾 Изменить</button>
+          </div>
+          <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:13px; color:#8e8e93;">Приглашение:</span>
+            <button class="copy-btn" id="inviteBtn" style="padding: 6px 14px; font-size: 13px;">🔗 Отправить ссылку супруге</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom API Token & Shortcuts -->
+    <div class="scard" style="border: 1px solid rgba(58, 139, 247, 0.4);">
+      <div class="schd">
+        <span style="color:#4da3ff;">🔑 Персональный токен и iOS Команды</span>
+      </div>
+      <div class="scb">
+        <p style="font-size:14px; color:#e5e5ea; line-height:1.4; margin-bottom: 12px;">
+          Вы можете задать <strong>свой собственный токен</strong> (например, <code>my_secret_key</code>) для защиты вебхука и интеграции с iPhone Shortcuts:
         </p>
 
-        <div style="font-size:13px; font-weight:600; color:#8e8e93;">ВАШ ЛИЧНЫЙ ТОКЕН:</div>
-        <div class="code-box" id="userTokenBox">tok_evgeniy_12345</div>
+        <div style="font-size:13px; font-weight:600; color:#8e8e93; margin-bottom:6px;">ВАШ ТОКЕН АВТОРИЗАЦИИ:</div>
+        <div style="display:flex; gap: 8px; margin-bottom: 12px;">
+          <input type="text" class="text-field" id="customTokenInput" placeholder="Ваш личный токен" style="margin-bottom:0; font-family:monospace;">
+          <button class="copy-btn" id="saveCustomTokenBtn" style="white-space:nowrap;">💾 Сохранить</button>
+          <button class="copy-btn" id="genTokenBtn" style="background:rgba(255,255,255,.08); color:#fff; border-color:rgba(255,255,255,.15); white-space:nowrap;">🎲 Сгенерировать</button>
+        </div>
 
-        <div style="font-size:13px; font-weight:600; color:#8e8e93;">АДРЕС ВЕБХУКА ДЛЯ КОМАНДЫ:</div>
-        <div class="code-box" id="webhookUrlBox">https://.../api/shortcuts/add</div>
+        <div style="font-size:13px; font-weight:600; color:#8e8e93;">АДРЕС ВЕБХУКА ДЛЯ КОМАНДЫ НА IPHONE:</div>
+        <div class="code-box" id="webhookUrlBox">https://.../api/shortcuts/add?token=...</div>
 
-        <div style="display:flex; gap:10px; margin-bottom: 20px;">
+        <div style="display:flex; gap:8px; margin-bottom: 18px;">
           <button class="copy-btn" id="copyWebhookBtn">📋 Скопировать ссылку</button>
           <button class="copy-btn" id="testShortcutBtn" style="background:rgba(52,199,89,.2); color:#34c759; border-color:rgba(52,199,89,.4);">🧪 Проверить команду</button>
         </div>
 
-        <div style="border-top: 1px solid rgba(255,255,255,.08); padding-top: 16px;">
-          <div style="font-weight:700; font-size:16px; margin-bottom: 14px;">Пошаговая настройка в iOS:</div>
+        <div style="border-top: 1px solid rgba(255,255,255,.08); padding-top: 14px;">
+          <div style="font-weight:700; font-size:15px; margin-bottom: 12px;">Инструкция по настройке в iOS:</div>
 
           <div class="step-card">
             <div class="step-num">1</div>
-            <div class="step-text">Откройте стандартное приложение <strong>«Команды» (Shortcuts)</strong> на iPhone и нажмите <strong>«+»</strong>.</div>
+            <div class="step-text">Откройте <strong>«Команды» (Shortcuts)</strong> на iPhone и нажмите <strong>«+»</strong>.</div>
           </div>
-
           <div class="step-card">
             <div class="step-num">2</div>
-            <div class="step-text">Добавьте действие <strong>«Запросить ввод»</strong>: тип ввода <strong>Число</strong>, подсказка «Сумма расхода:».</div>
+            <div class="step-text">Добавьте <strong>«Запросить ввод»</strong>: Число (Сумма).</div>
           </div>
-
           <div class="step-card">
             <div class="step-num">3</div>
-            <div class="step-text">Добавьте действие <strong>«Запросить ввод»</strong>: тип ввода <strong>Текст</strong>, подсказка «Что купили?».</div>
+            <div class="step-text">Добавьте <strong>«Запросить ввод»</strong>: Текст (Что купили).</div>
           </div>
-
           <div class="step-card">
             <div class="step-num">4</div>
             <div class="step-text">
-              Добавьте <strong>«Получить содержимое URL»</strong>:<br>
-              • URL: вставьте скопированный вебхук выше<br>
-              • Метод: <strong>POST</strong><br>
-              • Запрос JSON: поля <code>amount</code> (число из шага 2) и <code>title</code> (текст из шага 3).
+              Добавьте <strong>«Получить содержимое URL»</strong>: метод <strong>POST</strong>, вставьте скопированный вебхук с токеном.
             </div>
           </div>
-
           <div class="step-card">
             <div class="step-num">5</div>
-            <div class="step-text">Добавьте действие <strong>«Показать уведомление»</strong> с результатом. Готово! Вынесите команду на экран Домой или Action Button.</div>
+            <div class="step-text">Добавьте <strong>«Показать уведомление»</strong>. Готово! Привяжите к Action Button.</div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Danger Zone: Reset All -->
+    <div class="scard" style="border: 1px solid rgba(255, 59, 48, 0.4);">
+      <div class="schd">
+        <span style="color:#ff3b30;">Опасная зона</span>
+      </div>
+      <div class="scb">
+        <p style="font-size:14px; color:#a8a8ae; margin-bottom:12px;">
+          Обнулить все сохраненные траты семьи для начала нового учетного периода:
+        </p>
+        <button class="copy-btn red" id="dangerClearAllBtn" style="width:100%; justify-content:center; padding:12px 0;">
+          🗑 Полностью обнулить все покупки
+        </button>
       </div>
     </div>
   </div>
@@ -878,11 +1011,11 @@ html, body {
     <div class="fil" id="fil"></div>
     <div class="solid"></div>
     <div class="tabs" id="tabs">
-      <button class="tab on" aria-label="Траты">
+      <button class="tab on" aria-label="Операции">
         <span class="ico">
           <svg viewBox="0 0 24 24"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H5V8h14v10zm-2-7h-4v2h4v-2z"/></svg>
         </span>
-        <span>Траты</span>
+        <span>Операции</span>
       </button>
       <button class="tab" aria-label="Сводка">
         <span class="ico">
@@ -901,7 +1034,7 @@ html, body {
   </div>
 
   <!-- Elastic Liquid Glass Add (+) Button -->
-  <div class="matte circle" id="addBtn" role="button" tabindex="0" aria-label="Добавить расход">
+  <div class="matte circle" id="addBtn" role="button" tabindex="0" aria-label="Добавить">
     <span class="ics">
       <svg class="ic-s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
     </span>
@@ -909,19 +1042,25 @@ html, body {
   </div>
 </div>
 
-<!-- ================= ADD EXPENSE MODAL ================= -->
+<!-- ================= ADD MODAL: EXPENSE / INCOME ================= -->
 <div class="scrim" id="modalScrim"></div>
 <div class="modal" id="addModal">
   <div class="modal-header">
-    <h3>Новый расход</h3>
+    <h3 id="modalHeadTitle">Новая запись</h3>
     <button class="close-btn" id="closeAddModal">✕</button>
+  </div>
+
+  <!-- Segmented switch: Expense vs Income -->
+  <div class="type-seg">
+    <button class="seg-btn active-exp" id="segExpBtn" onclick="switchModalType('expense')">🔴 Расход</button>
+    <button class="seg-btn" id="segIncBtn" onclick="switchModalType('income')">🟢 Приход денег</button>
   </div>
 
   <div class="num-input-wrap">
     <input type="number" step="any" class="num-input" id="amountInput" placeholder="0 ₽" autofocus>
   </div>
 
-  <div class="quick-amounts">
+  <div class="quick-amounts" id="modalQuickAmounts">
     <button class="q-btn" onclick="addAmount(500)">+500</button>
     <button class="q-btn" onclick="addAmount(1000)">+1000</button>
     <button class="q-btn" onclick="addAmount(2000)">+2000</button>
@@ -933,30 +1072,47 @@ html, body {
     <button class="p-btn" id="payer2Btn" onclick="setPayer(2)">Супруга</button>
   </div>
 
-  <input type="text" class="text-field" id="descInput" placeholder="Что купили? (например: Магнит, Бензин...)">
+  <input type="text" class="text-field" id="descInput" placeholder="Название покупки или источник дохода">
 
-  <div style="font-size:13px; font-weight:700; color:#8e8e93; margin-bottom:8px; text-transform:uppercase;">Категория:</div>
-  <div class="cats-grid" id="modalCatsGrid">
-    <button class="cat-sel-btn active" data-cat="groceries"><span class="c-ico">🛒</span><span>Продукты</span></button>
-    <button class="cat-sel-btn" data-cat="child"><span class="c-ico">👶</span><span>Ребенок</span></button>
-    <button class="cat-sel-btn" data-cat="car"><span class="c-ico">🚗</span><span>Машина</span></button>
-    <button class="cat-sel-btn" data-cat="subs"><span class="c-ico">📱</span><span>Подписки</span></button>
-    <button class="cat-sel-btn" data-cat="cafes"><span class="c-ico">☕️</span><span>Кафе</span></button>
-    <button class="cat-sel-btn" data-cat="home"><span class="c-ico">🏠</span><span>Дом</span></button>
-    <button class="cat-sel-btn" data-cat="health"><span class="c-ico">💊</span><span>Здоровье</span></button>
-    <button class="cat-sel-btn" data-cat="fun"><span class="c-ico">🎁</span><span>Отдых</span></button>
-    <button class="cat-sel-btn" data-cat="other"><span class="c-ico">📦</span><span>Прочее</span></button>
-  </div>
+  <!-- Expense Categories grid -->
+  <div id="expenseCatsSection">
+    <div style="font-size:13px; font-weight:700; color:#8e8e93; margin-bottom:8px; text-transform:uppercase;">Категория расхода:</div>
+    <div class="cats-grid" id="modalCatsGrid">
+      <button class="cat-sel-btn active" data-cat="groceries"><span class="c-ico">🛒</span><span>Продукты</span></button>
+      <button class="cat-sel-btn" data-cat="child"><span class="c-ico">👶</span><span>Ребенок</span></button>
+      <button class="cat-sel-btn" data-cat="car"><span class="c-ico">🚗</span><span>Машина</span></button>
+      <button class="cat-sel-btn" data-cat="subs"><span class="c-ico">📱</span><span>Подписки</span></button>
+      <button class="cat-sel-btn" data-cat="cafes"><span class="c-ico">☕️</span><span>Кафе</span></button>
+      <button class="cat-sel-btn" data-cat="home"><span class="c-ico">🏠</span><span>Дом</span></button>
+      <button class="cat-sel-btn" data-cat="health"><span class="c-ico">💊</span><span>Здоровье</span></button>
+      <button class="cat-sel-btn" data-cat="fun"><span class="c-ico">🎁</span><span>Отдых</span></button>
+      <button class="cat-sel-btn" data-cat="other"><span class="c-ico">📦</span><span>Прочее</span></button>
+    </div>
 
-  <!-- Receipt upload with AI scanning -->
-  <input type="file" id="receiptFileInput" accept="image/*" style="display:none;">
-  <div class="receipt-upload-box" id="receiptUploadBtn">
-    <div id="receiptUploadStatus">
-      📷 <strong>Прикрепить чек</strong> (AI распознает сумму и магазин)
+    <!-- Receipt upload box -->
+    <input type="file" id="receiptFileInput" accept="image/*" style="display:none;">
+    <div class="receipt-upload-box" id="receiptUploadBtn">
+      <div id="receiptUploadStatus">
+        📷 <strong>Прикрепить чек</strong> (AI распознает сумму и магазин)
+      </div>
     </div>
   </div>
 
-  <button class="save-btn" id="saveExpenseBtn">Сохранить расход</button>
+  <!-- Income Sources grid -->
+  <div id="incomeSourcesSection" style="display:none;">
+    <div style="font-size:13px; font-weight:700; color:#8e8e93; margin-bottom:8px; text-transform:uppercase;">Источник дохода:</div>
+    <div class="cats-grid" id="modalSourcesGrid">
+      <button class="cat-sel-btn active-green" data-source="Зарплата"><span class="c-ico">💰</span><span>Зарплата</span></button>
+      <button class="cat-sel-btn" data-source="Аванс"><span class="c-ico">💵</span><span>Аванс</span></button>
+      <button class="cat-sel-btn" data-source="Премия"><span class="c-ico">🎯</span><span>Премия</span></button>
+      <button class="cat-sel-btn" data-source="Подработка"><span class="c-ico">💼</span><span>Подработка</span></button>
+      <button class="cat-sel-btn" data-source="Кэшбэк/Проценты"><span class="c-ico">💳</span><span>Кэшбэк</span></button>
+      <button class="cat-sel-btn" data-source="Подарок"><span class="c-ico">🎁</span><span>Подарок</span></button>
+      <button class="cat-sel-btn" data-source="Другой доход"><span class="c-ico">📦</span><span>Другое</span></button>
+    </div>
+  </div>
+
+  <button class="save-btn" id="saveTransactionBtn">Сохранить расход</button>
 </div>
 
 <!-- ================= RECEIPT VIEWER MODAL ================= -->
@@ -1049,7 +1205,7 @@ const ro = new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(rebuild,
 glassEls.concat(bdEls).forEach(([el]) => ro.observe(el));
 rebuild();
 
-// Haptic helper
+// Haptic feedback
 const hap = (() => {
   const w = window.Telegram && Telegram.WebApp, hf = w && w.platform && w.platform !== 'unknown' && w.HapticFeedback;
   return {
@@ -1084,7 +1240,9 @@ function setActive(i) {
   $('v1').classList.toggle('on', i === 1);
   $('v2').classList.toggle('on', i === 2);
   hap.impact('medium');
+  if (i === 0) loadAllTransactions();
   if (i === 1) loadAnalytics();
+  if (i === 2) loadFamilyInfo();
 }
 
 function ptr(e) {
@@ -1141,7 +1299,7 @@ function glassBtn(el, getL, always, mv = 1) {
 }
 const btnStep = glassBtn(addBtn, () => 70 * sU());
 
-// Animation physics loop
+// Physics Loop
 let last = performance.now();
 (function loop(now) {
   const dt = Math.min(.05, (now - last) / 1000 || .016); last = now;
@@ -1215,129 +1373,219 @@ let last = performance.now();
   requestAnimationFrame(loop);
 })(performance.now());
 
-/* ================= TELEGRAM WEBAPP INITIALIZATION ================= */
-(function tgInit() {
-  const w = window.Telegram && Telegram.WebApp;
-  try {
-    w && w.ready && w.ready();
-    w && w.expand && w.expand();
-    w && w.setHeaderColor && w.setHeaderColor('#000000');
-    w && w.setBackgroundColor && w.setBackgroundColor('#000000');
-    w && w.disableVerticalSwipes && w.disableVerticalSwipes();
-  } catch (e) {}
-})();
-
 /* ================= STATE & API CALLS ================= */
 let state = {
   familyId: 1,
   myUserId: 1,
-  selectedUserFilter: 'all',
-  selectedCatFilter: 'all',
+  familyName: "Семья Солиловых",
+  selectedTypeFilter: "all", // "all", "expenses", "incomes"
+  selectedUserFilter: "all",
+  selectedCatFilter: "all",
+  modalType: "expense",      // "expense" or "income"
   selectedModalPayer: 1,
-  selectedModalCat: 'groceries',
+  selectedModalCat: "groceries",
+  selectedModalSource: "Зарплата",
   uploadedReceiptUrl: null,
   uploadedReceiptMeta: null,
-  expenses: []
+  expenses: [],
+  incomes: [],
+  members: []
 };
 
-// Formatting helper
 const fmtMoney = num => Math.round(num).toLocaleString('ru-RU') + ' ₽';
+
+async function loadAllTransactions() {
+  await Promise.all([loadExpenses(), loadIncomes()]);
+  renderCombinedTransactions();
+}
 
 async function loadExpenses() {
   try {
     let url = `/api/expenses?family_id=${state.familyId}`;
     if (state.selectedUserFilter !== 'all') url += `&user_id=${state.selectedUserFilter}`;
     if (state.selectedCatFilter !== 'all') url += `&category=${state.selectedCatFilter}`;
-
     const res = await fetch(url);
     const data = await res.json();
     state.expenses = data.expenses || [];
-    renderExpenses();
   } catch (err) {
     console.error('Failed to load expenses', err);
   }
 }
 
-function renderExpenses() {
-  const container = $('expensesList');
-  if (!state.expenses.length) {
+async function loadIncomes() {
+  try {
+    let url = `/api/incomes?family_id=${state.familyId}`;
+    if (state.selectedUserFilter !== 'all') url += `&user_id=${state.selectedUserFilter}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    state.incomes = data.incomes || [];
+  } catch (err) {
+    console.error('Failed to load incomes', err);
+  }
+}
+
+function renderCombinedTransactions() {
+  const container = $('transactionsList');
+  let items = [];
+
+  if (state.selectedTypeFilter === 'all' || state.selectedTypeFilter === 'expenses') {
+    state.expenses.forEach(e => items.push({ ...e, itemType: 'expense', sortDate: e.expense_date + '_' + e.id }));
+  }
+  if (state.selectedTypeFilter === 'all' || state.selectedTypeFilter === 'incomes') {
+    state.incomes.forEach(i => items.push({ ...i, itemType: 'income', sortDate: i.income_date + '_' + i.id }));
+  }
+
+  items.sort((a, b) => b.sortDate.localeCompare(a.sortDate));
+
+  if (!items.length) {
     container.innerHTML = `<div style="text-align:center; padding: 32px 10px; color:#8e8e93;">
       <div style="font-size:32px; margin-bottom:8px;">🧾</div>
-      <div style="font-size:17px; font-weight:600; color:#fff;">Нет расходов в этом фильтре</div>
-      <div style="font-size:14px; margin-top:4px;">Нажмите «+» внизу или отправьте чек в бот</div>
+      <div style="font-size:16px; font-weight:600; color:#fff;">Нет записей в выбранном фильтре</div>
+      <div style="font-size:13px; margin-top:4px;">Нажмите «+» внизу для добавления расхода или прихода денег</div>
     </div>`;
-    $('expCountLabel').innerText = 'История расходов';
-    $('expSumLabel').innerText = '0 ₽';
+    $('transCountLabel').innerText = 'История операций';
     return;
   }
 
-  let totalSum = 0;
   let html = '';
-
-  state.expenses.forEach(exp => {
-    totalSum += exp.amount;
-    const isWife = exp.user_id === 2;
+  items.forEach(it => {
+    const isIncome = it.itemType === 'income';
+    const isWife = it.user_id === 2;
     const tagClass = isWife ? 'tag-wife' : 'tag-evgeniy';
-    const userName = exp.first_name || (isWife ? 'Супруга' : 'Евгений');
+    const userName = it.first_name || (isWife ? 'Супруга' : 'Евгений');
+
+    let icon = isIncome ? '💰' : (it.category_icon || '💳');
+    let title = isIncome ? (it.description || it.source || 'Приход денег') : (it.description || it.category_name || 'Расход');
+    let dateStr = isIncome ? it.income_date : it.expense_date;
+    let amountStr = isIncome ? `+${fmtMoney(it.amount)}` : fmtMoney(it.amount);
 
     let receiptBtn = '';
-    if (exp.receipt_url) {
-      receiptBtn = `<span class="receipt-pill" onclick="openReceiptView('${exp.receipt_url}', '${encodeURIComponent(exp.description || '')}')">🧾 Чек</span>`;
+    if (!isIncome && it.receipt_url) {
+      receiptBtn = `<span class="receipt-pill" onclick="openReceiptView('${it.receipt_url}', '${encodeURIComponent(it.description || '')}')">🧾 Чек</span>`;
     }
+
+    let deleteFunc = isIncome ? `deleteSpecificIncome(${it.id})` : `deleteSpecificExpense(${it.id})`;
 
     html += `
       <div class="exp-item">
-        <div class="exp-icon">${exp.category_icon || '💳'}</div>
+        <div class="exp-icon ${isIncome ? 'is-income' : ''}">${icon}</div>
         <div class="exp-info">
-          <div class="exp-title">${escapeHtml(exp.description || exp.category_name)}</div>
+          <div class="exp-title">${escapeHtml(title)}</div>
           <div class="exp-sub">
             <span class="user-tag ${tagClass}">${escapeHtml(userName)}</span>
             <span>·</span>
-            <span>${exp.expense_date}</span>
+            <span>${dateStr}</span>
             ${receiptBtn}
           </div>
         </div>
-        <div class="exp-amount">${fmtMoney(exp.amount)}</div>
+        <div class="exp-amount-wrap">
+          <div class="exp-amount ${isIncome ? 'green' : ''}">${amountStr}</div>
+          <button class="del-btn" onclick="${deleteFunc}" aria-label="Удалить">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          </button>
+        </div>
       </div>
     `;
   });
 
   container.innerHTML = html;
-  $('expCountLabel').innerText = `${state.expenses.length} трат`;
-  $('expSumLabel').innerText = fmtMoney(totalSum);
+  $('transCountLabel').innerText = `${items.length} операций`;
 }
 
 function escapeHtml(t) {
-  return String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  return String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 }
 
+// Delete single expense
+async function deleteSpecificExpense(id) {
+  if (!confirm('Удалить эту покупку?')) return;
+  try {
+    const res = await fetch(`/api/expenses/${id}?family_id=${state.familyId}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) {
+      hap.impact('medium');
+      loadAllTransactions();
+      loadAnalytics();
+    }
+  } catch (err) {
+    alert('Не удалось удалить покупку');
+  }
+}
+
+// Delete single income
+async function deleteSpecificIncome(id) {
+  if (!confirm('Удалить эту запись прихода денег?')) return;
+  try {
+    const res = await fetch(`/api/incomes/${id}?family_id=${state.familyId}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) {
+      hap.impact('medium');
+      loadAllTransactions();
+      loadAnalytics();
+    }
+  } catch (err) {
+    alert('Не удалось удалить запись дохода');
+  }
+}
+
+// Clear all expenses
+$('clearAllExpensesBtn').addEventListener('click', confirmClearAllExpenses);
+$('dangerClearAllBtn').addEventListener('click', confirmClearAllExpenses);
+
+async function confirmClearAllExpenses() {
+  if (!confirm('⚠️ Вы уверены, что хотите полностью ОБНУЛИТЬ все покупки семьи?\nЭто действие удалит все расходы.')) return;
+  try {
+    hap.impact('medium');
+    const res = await fetch(`/api/expenses/clear-all?family_id=${state.familyId}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) {
+      alert('✅ Все покупки успешно обнулены!');
+      loadAllTransactions();
+      loadAnalytics();
+    }
+  } catch (e) {
+    alert('Ошибка при обнулении покупок');
+  }
+}
+
+// Analytics loader
 async function loadAnalytics() {
   try {
     const res = await fetch(`/api/analytics/monthly?family_id=${state.familyId}`);
     const data = await res.json();
 
-    $('totalSpentHero').innerText = fmtMoney(data.total_spent);
-    $('budgetLimitHero').innerText = `из ${fmtMoney(data.monthly_budget)} запланированных на месяц`;
+    $('heroIncome').innerText = `+${fmtMoney(data.total_income)}`;
+    $('heroSpent').innerText = fmtMoney(data.total_spent);
+    $('heroNet').innerText = fmtMoney(data.net_balance);
+    $('budgetLimitHero').innerText = `Лимит трат: ${fmtMoney(data.monthly_budget)}`;
+
     $('budgetBar').style.width = Math.min(100, data.budget_spent_pct) + '%';
-    $('budgetPct').innerText = `${data.budget_spent_pct}% бюджета`;
+    $('budgetPct').innerText = `${data.budget_spent_pct}% лимита`;
+    $('savingsPctBadge').innerText = `Накопления: ${data.savings_pct}%`;
 
-    const remain = Math.max(0, data.monthly_budget - data.total_spent);
-    $('budgetRemain').innerText = `Осталось ${fmtMoney(remain)}`;
-
-    // Users breakdown
+    // Users Expenses breakdown
     const u1 = data.users.find(u => u.id === 1) || { first_name: 'Евгений', total_user: 0 };
     const u2 = data.users.find(u => u.id === 2) || { first_name: 'Супруга', total_user: 0 };
+    $('u1SpentName').innerText = u1.first_name;
+    $('u1SpentSum').innerText = fmtMoney(u1.total_user);
+    $('u2SpentName').innerText = u2.first_name;
+    $('u2SpentSum').innerText = fmtMoney(u2.total_user);
 
-    $('u1Name').innerText = u1.first_name;
-    $('u1Sum').innerText = fmtMoney(u1.total_user);
-    $('u2Name').innerText = u2.first_name;
-    $('u2Sum').innerText = fmtMoney(u2.total_user);
+    const sumSpent = (u1.total_user + u2.total_user) || 1;
+    $('u1Bar').style.width = Math.round((u1.total_user / sumSpent) * 100) + '%';
+    $('u2Bar').style.width = (100 - Math.round((u1.total_user / sumSpent) * 100)) + '%';
 
-    const sumBoth = (u1.total_user + u2.total_user) || 1;
-    const p1 = Math.round((u1.total_user / sumBoth) * 100);
-    const p2 = 100 - p1;
-    $('u1Bar').style.width = p1 + '%';
-    $('u2Bar').style.width = p2 + '%';
+    // Users Income breakdown
+    const inc1 = (data.income_users && data.income_users.find(u => u.id === 1)) || { first_name: 'Евгений', total_user_income: 0 };
+    const inc2 = (data.income_users && data.income_users.find(u => u.id === 2)) || { first_name: 'Супруга', total_user_income: 0 };
+    $('u1IncName').innerText = inc1.first_name;
+    $('u1IncSum').innerText = `+${fmtMoney(inc1.total_user_income)}`;
+    $('u2IncName').innerText = inc2.first_name;
+    $('u2IncSum').innerText = `+${fmtMoney(inc2.total_user_income)}`;
+
+    const sumInc = (inc1.total_user_income + inc2.total_user_income) || 1;
+    $('u1IncBar').style.width = Math.round((inc1.total_user_income / sumInc) * 100) + '%';
+    $('u2IncBar').style.width = (100 - Math.round((inc1.total_user_income / sumInc) * 100)) + '%';
 
     // 50/50 Split
     if (data.split && data.split.text) {
@@ -1365,29 +1613,38 @@ async function loadAnalytics() {
   }
 }
 
-// User filter chips
+// Filter chips events
+$('typeChips').querySelectorAll('.chip').forEach(ch => {
+  ch.addEventListener('click', () => {
+    $('typeChips').querySelectorAll('.chip').forEach(c => c.classList.remove('active', 'active-green'));
+    ch.classList.add(ch.dataset.type === 'incomes' ? 'active-green' : 'active');
+    state.selectedTypeFilter = ch.dataset.type;
+    hap.select();
+    renderCombinedTransactions();
+  });
+});
+
 $('userChips').querySelectorAll('.chip').forEach(ch => {
   ch.addEventListener('click', () => {
     $('userChips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
     ch.classList.add('active');
     state.selectedUserFilter = ch.dataset.user;
     hap.select();
-    loadExpenses();
+    loadAllTransactions();
   });
 });
 
-// Category filter chips
 $('catChips').querySelectorAll('.chip').forEach(ch => {
   ch.addEventListener('click', () => {
     $('catChips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
     ch.classList.add('active');
     state.selectedCatFilter = ch.dataset.cat;
     hap.select();
-    loadExpenses();
+    loadAllTransactions();
   });
 });
 
-/* ================= MODAL LOGIC ================= */
+/* ================= MODAL LOGIC: EXPENSE & INCOME ================= */
 const scrim = $('modalScrim');
 const addModal = $('addModal');
 const addBtnEl = $('addBtn');
@@ -1415,6 +1672,19 @@ addBtnEl.addEventListener('click', openAddModal);
 $('closeAddModal').addEventListener('click', closeAddModal);
 scrim.addEventListener('click', closeAddModal);
 
+function switchModalType(type) {
+  state.modalType = type;
+  const isExp = type === 'expense';
+  $('segExpBtn').classList.toggle('active-exp', isExp);
+  $('segIncBtn').classList.toggle('active-inc', !isExp);
+  $('expenseCatsSection').style.display = isExp ? 'block' : 'none';
+  $('incomeSourcesSection').style.display = isExp ? 'none' : 'block';
+  $('modalHeadTitle').innerText = isExp ? 'Новый расход' : 'Новый приход денег';
+  $('saveTransactionBtn').innerText = isExp ? 'Сохранить расход' : 'Записать приход денег';
+  $('saveTransactionBtn').classList.toggle('is-income', !isExp);
+  hap.select();
+}
+
 function addAmount(delta) {
   const inp = $('amountInput');
   const curVal = parseFloat(inp.value) || 0;
@@ -1429,7 +1699,7 @@ function setPayer(userId) {
   hap.select();
 }
 
-// Modal category selection
+// Category & Source selection in Modal
 $('modalCatsGrid').querySelectorAll('.cat-sel-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     $('modalCatsGrid').querySelectorAll('.cat-sel-btn').forEach(b => b.classList.remove('active'));
@@ -1439,11 +1709,17 @@ $('modalCatsGrid').querySelectorAll('.cat-sel-btn').forEach(btn => {
   });
 });
 
-// Receipt File Upload & Scan
-$('receiptUploadBtn').addEventListener('click', () => {
-  $('receiptFileInput').click();
+$('modalSourcesGrid').querySelectorAll('.cat-sel-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $('modalSourcesGrid').querySelectorAll('.cat-sel-btn').forEach(b => b.classList.remove('active-green'));
+    btn.classList.add('active-green');
+    state.selectedModalSource = btn.dataset.source;
+    hap.select();
+  });
 });
 
+// Receipt File Upload & Scan
+$('receiptUploadBtn').addEventListener('click', () => $('receiptFileInput').click());
 $('receiptFileInput').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -1455,10 +1731,7 @@ $('receiptFileInput').addEventListener('change', async e => {
   formData.append('file', file);
 
   try {
-    const res = await fetch('/api/expenses/scan-receipt', {
-      method: 'POST',
-      body: formData
-    });
+    const res = await fetch('/api/expenses/scan-receipt', { method: 'POST', body: formData });
     const data = await res.json();
     if (data.success && data.receipt) {
       const r = data.receipt;
@@ -1473,55 +1746,78 @@ $('receiptFileInput').addEventListener('change', async e => {
           b.classList.toggle('active', b.dataset.cat === r.category_id);
         });
       }
-
       $('receiptUploadStatus').innerHTML = `✅ <b>Чек распознан:</b> ${r.store_name} (${fmtMoney(r.amount)})`;
       $('receiptUploadBtn').classList.add('has-img');
       hap.impact('medium');
     }
   } catch (err) {
-    console.error('Receipt scan error', err);
     $('receiptUploadStatus').innerHTML = `⚠️ Ошибка сканирования чека. Введите сумму вручную.`;
   }
 });
 
-// Save Expense
-$('saveExpenseBtn').addEventListener('click', async () => {
+// Save Transaction (Expense or Income)
+$('saveTransactionBtn').addEventListener('click', async () => {
   const amount = parseFloat($('amountInput').value);
   if (!amount || amount <= 0) {
-    alert('Пожалуйста, введите сумму расхода');
+    alert('Пожалуйста, введите сумму');
     return;
   }
 
-  const desc = $('descInput').value.trim() || 'Покупка';
-  const payload = {
-    amount: amount,
-    category_id: state.selectedModalCat,
-    description: desc,
-    user_id: state.selectedModalPayer,
-    family_id: state.familyId,
-    receipt_url: state.uploadedReceiptUrl,
-    receipt_meta: state.uploadedReceiptMeta
-  };
+  const desc = $('descInput').value.trim();
 
-  try {
-    const res = await fetch('/api/expenses', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if (data.success) {
-      hap.impact('medium');
-      closeAddModal();
-      loadExpenses();
-      loadAnalytics();
+  if (state.modalType === 'income') {
+    const payload = {
+      amount: amount,
+      source: state.selectedModalSource,
+      description: desc || state.selectedModalSource,
+      user_id: state.selectedModalPayer,
+      family_id: state.familyId
+    };
+    try {
+      const res = await fetch('/api/incomes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        hap.impact('medium');
+        closeAddModal();
+        loadAllTransactions();
+        loadAnalytics();
+      }
+    } catch (err) {
+      alert('Ошибка при сохранении дохода');
     }
-  } catch (err) {
-    console.error('Failed to save expense', err);
+  } else {
+    const payload = {
+      amount: amount,
+      category_id: state.selectedModalCat,
+      description: desc || 'Покупка',
+      user_id: state.selectedModalPayer,
+      family_id: state.familyId,
+      receipt_url: state.uploadedReceiptUrl,
+      receipt_meta: state.uploadedReceiptMeta
+    };
+    try {
+      const res = await fetch('/api/expenses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        hap.impact('medium');
+        closeAddModal();
+        loadAllTransactions();
+        loadAnalytics();
+      }
+    } catch (err) {
+      alert('Ошибка при сохранении расхода');
+    }
   }
 });
 
-// Receipt Viewer
 function openReceiptView(url, desc) {
   $('receiptModalImg').src = url;
   $('receiptModalMeta').innerText = decodeURIComponent(desc);
@@ -1531,20 +1827,153 @@ function openReceiptView(url, desc) {
 }
 $('closeReceiptModal').addEventListener('click', closeAddModal);
 
-/* ================= SHORTCUTS & FAMILY SETUP ================= */
+/* ================= FAMILY, SPOUSES & CUSTOM TOKEN ================= */
 async function loadFamilyInfo() {
   try {
     const res = await fetch(`/api/family/me?family_id=${state.familyId}&user_id=${state.myUserId}`);
     const data = await res.json();
+
+    if (data.family) {
+      state.familyName = data.family.name;
+      $('famBadge').innerText = data.family.name;
+      $('editFamNameInput').value = data.family.name;
+    }
+
+    if (data.members && data.members.length >= 2) {
+      const m1 = data.members[0];
+      const m2 = data.members[1];
+      $('editM1Name').value = m1.first_name;
+      $('editM2Name').value = m2.first_name;
+      $('u1Chip').innerText = m1.first_name;
+      $('u2Chip').innerText = m2.first_name;
+      $('payer1Btn').innerText = m1.first_name;
+      $('payer2Btn').innerText = m2.first_name;
+      $('userBadge').innerText = `👤 ${m1.first_name}`;
+    }
+
     if (data.me && data.me.api_token) {
-      $('userTokenBox').innerText = data.me.api_token;
-      const origin = window.location.origin;
-      $('webhookUrlBox').innerText = `${origin}/api/shortcuts/add?token=${data.me.api_token}`;
+      $('customTokenInput').value = data.me.api_token;
+      updateWebhookDisplay(data.me.api_token);
     }
   } catch (err) {
     console.error('Failed to load family info', err);
   }
 }
+
+function updateWebhookDisplay(tok) {
+  const origin = window.location.origin;
+  $('webhookUrlBox').innerText = `${origin}/api/shortcuts/add?token=${tok}`;
+}
+
+// Rename Family
+$('saveFamNameBtn').addEventListener('click', async () => {
+  const newName = $('editFamNameInput').value.trim();
+  if (!newName) return;
+  try {
+    const res = await fetch('/api/family/rename', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ family_id: state.familyId, name: newName })
+    });
+    const data = await res.json();
+    if (data.success) {
+      hap.impact('medium');
+      $('famBadge').innerText = newName;
+      alert(`✅ Название семьи изменено на: ${newName}`);
+    }
+  } catch (e) {
+    alert('Не удалось изменить название семьи');
+  }
+});
+
+// Rename Spouse 1
+$('saveM1Btn').addEventListener('click', async () => {
+  const name = $('editM1Name').value.trim();
+  if (!name) return;
+  try {
+    const res = await fetch('/api/family/member', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: 1, first_name: name })
+    });
+    const data = await res.json();
+    if (data.success) {
+      hap.impact('medium');
+      $('u1Chip').innerText = name;
+      $('payer1Btn').innerText = name;
+      $('userBadge').innerText = `👤 ${name}`;
+      alert(`✅ Имя сохранено: ${name}`);
+      loadAnalytics();
+    }
+  } catch (e) {
+    alert('Не удалось сохранить имя');
+  }
+});
+
+// Rename Spouse 2
+$('saveM2Btn').addEventListener('click', async () => {
+  const name = $('editM2Name').value.trim();
+  if (!name) return;
+  try {
+    const res = await fetch('/api/family/member', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: 2, first_name: name })
+    });
+    const data = await res.json();
+    if (data.success) {
+      hap.impact('medium');
+      $('u2Chip').innerText = name;
+      $('payer2Btn').innerText = name;
+      alert(`✅ Имя супруги сохранено: ${name}`);
+      loadAnalytics();
+    }
+  } catch (e) {
+    alert('Не удалось сохранить имя');
+  }
+});
+
+// Save Custom Token
+$('saveCustomTokenBtn').addEventListener('click', async () => {
+  const token = $('customTokenInput').value.trim();
+  if (!token) {
+    alert('Токен не может быть пустым');
+    return;
+  }
+  try {
+    const res = await fetch('/api/family/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: state.myUserId, token: token })
+    });
+    const data = await res.json();
+    if (data.success) {
+      hap.impact('medium');
+      updateWebhookDisplay(token);
+      alert(`✅ Ваш персональный токен обновлен на: ${token}\nВебхук для команд перенастроен!`);
+    } else {
+      alert(`Ошибка: ${data.detail || 'Не удалось сохранить токен'}`);
+    }
+  } catch (e) {
+    alert('Ошибка сети при сохранении токена');
+  }
+});
+
+// Generate Random Token
+$('genTokenBtn').addEventListener('click', async () => {
+  try {
+    const res = await fetch(`/api/family/token/generate?user_id=${state.myUserId}`, { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      hap.impact('medium');
+      $('customTokenInput').value = data.token;
+      updateWebhookDisplay(data.token);
+      alert(`🎲 Сгенерирован новый токен: ${data.token}`);
+    }
+  } catch (e) {
+    alert('Ошибка генерации токена');
+  }
+});
 
 $('copyWebhookBtn').addEventListener('click', () => {
   const text = $('webhookUrlBox').innerText;
@@ -1555,7 +1984,7 @@ $('copyWebhookBtn').addEventListener('click', () => {
 });
 
 $('testShortcutBtn').addEventListener('click', async () => {
-  const token = $('userTokenBox').innerText;
+  const token = $('customTokenInput').value.trim();
   try {
     hap.impact('light');
     const res = await fetch('/api/shortcuts/add', {
@@ -1571,7 +2000,7 @@ $('testShortcutBtn').addEventListener('click', async () => {
     if (data.success) {
       hap.impact('medium');
       alert(`🎉 Успешно!\n\nБот обработал запрос:\n${data.message}`);
-      loadExpenses();
+      loadAllTransactions();
       loadAnalytics();
     } else {
       alert(`Ошибка: ${data.detail || 'Не удалось отправить'}`);
@@ -1591,8 +2020,8 @@ $('inviteBtn').addEventListener('click', () => {
   }
 });
 
-// Initial boot
-loadExpenses();
+// Boot
+loadAllTransactions();
 loadFamilyInfo();
 </script>
 </body>

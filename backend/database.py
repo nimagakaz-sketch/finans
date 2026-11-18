@@ -18,6 +18,16 @@ DEFAULT_CATEGORIES = [
     {"id": "other", "name": "Прочее", "icon": "📦", "color": "#8E8E93"},
 ]
 
+DEFAULT_INCOME_SOURCES = [
+    {"id": "salary", "name": "Зарплата", "icon": "💰"},
+    {"id": "advance", "name": "Аванс", "icon": "💵"},
+    {"id": "bonus", "name": "Премия", "icon": "🎯"},
+    {"id": "sidejob", "name": "Подработка", "icon": "💼"},
+    {"id": "cashback", "name": "Кэшбэк/Проценты", "icon": "💳"},
+    {"id": "gift", "name": "Подарок", "icon": "🎁"},
+    {"id": "other_inc", "name": "Другой доход", "icon": "📦"},
+]
+
 @asynccontextmanager
 async def get_db():
     async with aiosqlite.connect(DB_PATH) as db:
@@ -76,6 +86,19 @@ async def init_db():
         );
         """)
 
+        await db.execute("""
+        CREATE TABLE IF NOT EXISTS incomes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            family_id INTEGER NOT NULL REFERENCES families(id) ON DELETE CASCADE,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            amount REAL NOT NULL,
+            source TEXT NOT NULL DEFAULT 'Зарплата',
+            description TEXT,
+            income_date TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """)
+
         # Insert default categories
         for cat in DEFAULT_CATEGORIES:
             await db.execute(
@@ -86,6 +109,8 @@ async def init_db():
         # Check if default family exists; if not, create seed data
         cursor = await db.execute("SELECT id FROM families LIMIT 1")
         row = await cursor.fetchone()
+        today = date.today().strftime("%Y-%m-%d")
+
         if not row:
             invite_code = secrets.token_hex(4).upper()
             cursor = await db.execute(
@@ -110,8 +135,7 @@ async def init_db():
                 (2, family_id, "Супруга", "wife", "Супруга", "#ff5a8a", "tok_wife_67890")
             )
 
-            # Insert sample realistic expenses for the current month
-            today = date.today().strftime("%Y-%m-%d")
+            # Insert sample realistic expenses for current month
             sample_expenses = [
                 (family_id, 1, 3450.0, "groceries", "Супермаркет Перекресток", today, None),
                 (family_id, 2, 1890.0, "groceries", "ВкусВилл свежие ягоды и сыр", today, None),
@@ -133,6 +157,42 @@ async def init_db():
                     """,
                     exp
                 )
+
+            # Insert sample realistic incomes for current month
+            sample_incomes = [
+                (family_id, 1, 130000.0, "Зарплата", "Основная зарплата", today),
+                (family_id, 2, 95000.0, "Зарплата", "Основная зарплата", today),
+                (family_id, 1, 15000.0, "Премия", "Квартальная премия", today),
+                (family_id, 2, 4500.0, "Кэшбэк/Проценты", "Кэшбэк по карте", today),
+            ]
+            for inc in sample_incomes:
+                await db.execute(
+                    """
+                    INSERT INTO incomes (family_id, user_id, amount, source, description, income_date)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    inc
+                )
+        else:
+            # Check if incomes table has seed data
+            cursor = await db.execute("SELECT id FROM incomes LIMIT 1")
+            inc_row = await cursor.fetchone()
+            if not inc_row:
+                family_id = row["id"]
+                sample_incomes = [
+                    (family_id, 1, 130000.0, "Зарплата", "Основная зарплата", today),
+                    (family_id, 2, 95000.0, "Зарплата", "Основная зарплата", today),
+                    (family_id, 1, 15000.0, "Премия", "Квартальная премия", today),
+                    (family_id, 2, 4500.0, "Кэшбэк/Проценты", "Кэшбэк по карте", today),
+                ]
+                for inc in sample_incomes:
+                    await db.execute(
+                        """
+                        INSERT INTO incomes (family_id, user_id, amount, source, description, income_date)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                        """,
+                        inc
+                    )
 
         await db.commit()
 
@@ -156,9 +216,42 @@ async def get_family_by_id(family_id: int):
 
 async def get_family_members(family_id: int):
     async with get_db() as db:
-        cursor = await db.execute("SELECT * FROM users WHERE family_id = ?", (family_id,))
+        cursor = await db.execute("SELECT * FROM users WHERE family_id = ? ORDER BY id ASC", (family_id,))
         rows = await cursor.fetchall()
         return [dict(r) for r in rows]
+
+async def update_family_name(family_id: int, name: str):
+    async with get_db() as db:
+        await db.execute("UPDATE families SET name = ? WHERE id = ?", (name.strip(), family_id))
+        await db.commit()
+        return await get_family_by_id(family_id)
+
+async def update_user_profile(user_id: int, first_name: str, role: str = None):
+    async with get_db() as db:
+        if role:
+            await db.execute("UPDATE users SET first_name = ?, role = ? WHERE id = ?", (first_name.strip(), role.strip(), user_id))
+        else:
+            await db.execute("UPDATE users SET first_name = ? WHERE id = ?", (first_name.strip(), user_id))
+        await db.commit()
+        cursor = await db.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        row = await cursor.fetchone()
+        return dict(row) if row else None
+
+async def update_user_token(user_id: int, new_token: str):
+    clean_token = new_token.strip()
+    if not clean_token:
+        raise ValueError("Токен не может быть пустым.")
+    async with get_db() as db:
+        # Check if already in use by another user
+        cursor = await db.execute("SELECT id FROM users WHERE api_token = ? AND id != ?", (clean_token, user_id))
+        existing = await cursor.fetchone()
+        if existing:
+            raise ValueError("Этот токен уже используется другим аккаунтом. Выберите другой токен.")
+        await db.execute("UPDATE users SET api_token = ? WHERE id = ?", (clean_token, user_id))
+        await db.commit()
+        cursor = await db.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        row = await cursor.fetchone()
+        return dict(row) if row else None
 
 async def create_user_and_family(tg_id: int, first_name: str, username: str = None, role: str = "Супруг"):
     async with get_db() as db:
@@ -188,7 +281,6 @@ async def join_family_by_code(tg_id: int, invite_code: str, first_name: str, use
             return None
         family_id = row["id"]
 
-        # Check if user already exists
         cursor = await db.execute("SELECT * FROM users WHERE id = ?", (tg_id,))
         user_row = await cursor.fetchone()
         token = "tok_" + secrets.token_hex(8)
@@ -206,6 +298,7 @@ async def join_family_by_code(tg_id: int, invite_code: str, first_name: str, use
         await db.commit()
         return await get_user_by_telegram_id(tg_id)
 
+# ================= EXPENSES =================
 async def add_expense_record(
     family_id: int,
     user_id: int,
@@ -279,12 +372,90 @@ async def delete_expense_record(expense_id: int, family_id: int):
         await db.commit()
         return cursor.rowcount > 0
 
+async def delete_all_expenses(family_id: int):
+    async with get_db() as db:
+        cursor = await db.execute("DELETE FROM expenses WHERE family_id = ?", (family_id,))
+        await db.commit()
+        return cursor.rowcount
+
+# ================= INCOMES (ПРИХОД ДЕНЕГ) =================
+async def add_income_record(
+    family_id: int,
+    user_id: int,
+    amount: float,
+    source: str = "Зарплата",
+    description: str = None,
+    income_date: str = None
+):
+    if not income_date:
+        income_date = date.today().strftime("%Y-%m-%d")
+
+    async with get_db() as db:
+        cursor = await db.execute(
+            """
+            INSERT INTO incomes (family_id, user_id, amount, source, description, income_date)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (family_id, user_id, amount, source, description, income_date)
+        )
+        await db.commit()
+        income_id = cursor.lastrowid
+
+        cursor = await db.execute(
+            """
+            SELECT i.*, u.first_name, u.role, u.avatar_color
+            FROM incomes i
+            JOIN users u ON i.user_id = u.id
+            WHERE i.id = ?
+            """,
+            (income_id,)
+        )
+        row = await cursor.fetchone()
+        return dict(row)
+
+async def get_incomes_list(family_id: int, month_prefix: str = None, user_id: int = None):
+    query = """
+        SELECT i.*, u.first_name, u.role, u.avatar_color
+        FROM incomes i
+        JOIN users u ON i.user_id = u.id
+        WHERE i.family_id = ?
+    """
+    params = [family_id]
+
+    if month_prefix:
+        query += " AND i.income_date LIKE ?"
+        params.append(f"{month_prefix}%")
+
+    if user_id:
+        query += " AND i.user_id = ?"
+        params.append(user_id)
+
+    query += " ORDER BY i.income_date DESC, i.id DESC"
+
+    async with get_db() as db:
+        cursor = await db.execute(query, params)
+        rows = await cursor.fetchall()
+        return [dict(r) for r in rows]
+
+async def delete_income_record(income_id: int, family_id: int):
+    async with get_db() as db:
+        cursor = await db.execute("DELETE FROM incomes WHERE id = ? AND family_id = ?", (income_id, family_id))
+        await db.commit()
+        return cursor.rowcount > 0
+
+async def delete_all_incomes(family_id: int):
+    async with get_db() as db:
+        cursor = await db.execute("DELETE FROM incomes WHERE family_id = ?", (family_id,))
+        await db.commit()
+        return cursor.rowcount
+
+# ================= MONTHLY ANALYTICS =================
 async def get_family_monthly_analytics(family_id: int, month_prefix: str = None):
     if not month_prefix:
         month_prefix = date.today().strftime("%Y-%m")
 
     async with get_db() as db:
-        # Total amount
+        # Total spent (expenses)
         cursor = await db.execute(
             "SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE family_id = ? AND expense_date LIKE ?",
             (family_id, f"{month_prefix}%")
@@ -292,13 +463,25 @@ async def get_family_monthly_analytics(family_id: int, month_prefix: str = None)
         total_row = await cursor.fetchone()
         total_spent = total_row["total"]
 
+        # Total income (приход денег)
+        cursor = await db.execute(
+            "SELECT COALESCE(SUM(amount), 0) as total_inc FROM incomes WHERE family_id = ? AND income_date LIKE ?",
+            (family_id, f"{month_prefix}%")
+        )
+        inc_row = await cursor.fetchone()
+        total_income = inc_row["total_inc"]
+
+        # Net savings / balance = income - expenses
+        net_balance = total_income - total_spent
+
         # Family budget
-        cursor = await db.execute("SELECT monthly_budget, currency FROM families WHERE id = ?", (family_id,))
+        cursor = await db.execute("SELECT name, monthly_budget, currency FROM families WHERE id = ?", (family_id,))
         fam_row = await cursor.fetchone()
         budget = fam_row["monthly_budget"] if fam_row else 150000.0
         currency = fam_row["currency"] if fam_row else "₽"
+        family_name = fam_row["name"] if fam_row else "Семья"
 
-        # By User
+        # Expenses By User
         cursor = await db.execute(
             """
             SELECT u.id, u.first_name, u.role, u.avatar_color, COALESCE(SUM(e.amount), 0) as total_user
@@ -306,14 +489,51 @@ async def get_family_monthly_analytics(family_id: int, month_prefix: str = None)
             LEFT JOIN expenses e ON e.user_id = u.id AND e.expense_date LIKE ?
             WHERE u.family_id = ?
             GROUP BY u.id
-            ORDER BY total_user DESC
+            ORDER BY u.id ASC
             """,
             (f"{month_prefix}%", family_id)
         )
         users_rows = await cursor.fetchall()
         users_breakdown = [dict(r) for r in users_rows]
 
-        # Calculate 50/50 split settlement
+        # Incomes By User
+        cursor = await db.execute(
+            """
+            SELECT u.id, u.first_name, u.role, u.avatar_color, COALESCE(SUM(i.amount), 0) as total_user_income
+            FROM users u
+            LEFT JOIN incomes i ON i.user_id = u.id AND i.income_date LIKE ?
+            WHERE u.family_id = ?
+            GROUP BY u.id
+            ORDER BY u.id ASC
+            """,
+            (f"{month_prefix}%", family_id)
+        )
+        inc_user_rows = await cursor.fetchall()
+        income_users_breakdown = [dict(r) for r in inc_user_rows]
+
+        # Incomes By Source
+        cursor = await db.execute(
+            """
+            SELECT source, COALESCE(SUM(amount), 0) as total_source, COUNT(id) as count_source
+            FROM incomes
+            WHERE family_id = ? AND income_date LIKE ?
+            GROUP BY source
+            ORDER BY total_source DESC
+            """,
+            (family_id, f"{month_prefix}%")
+        )
+        source_rows = await cursor.fetchall()
+        sources_breakdown = []
+        for r in source_rows:
+            pct = round((r["total_source"] / total_income * 100), 1) if total_income > 0 else 0
+            sources_breakdown.append({
+                "source": r["source"],
+                "total": r["total_source"],
+                "count": r["count_source"],
+                "percentage": pct
+            })
+
+        # Calculate 50/50 split settlement for expenses
         split_settlement = None
         if len(users_breakdown) >= 2:
             u1, u2 = users_breakdown[0], users_breakdown[1]
@@ -383,11 +603,17 @@ async def get_family_monthly_analytics(family_id: int, month_prefix: str = None)
 
         return {
             "month": month_prefix,
+            "family_name": family_name,
             "total_spent": total_spent,
+            "total_income": total_income,
+            "net_balance": net_balance,
             "monthly_budget": budget,
             "currency": currency,
             "budget_spent_pct": round((total_spent / budget * 100), 1) if budget > 0 else 0,
+            "savings_pct": round((net_balance / total_income * 100), 1) if total_income > 0 else 0,
             "users": users_breakdown,
+            "income_users": income_users_breakdown,
+            "income_sources": sources_breakdown,
             "split": split_settlement,
             "categories": categories_breakdown,
             "dynamics": daily_dynamics

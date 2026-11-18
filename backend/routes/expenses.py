@@ -7,6 +7,7 @@ from backend.database import (
     get_expenses_list,
     add_expense_record,
     delete_expense_record,
+    delete_all_expenses,
     get_user_by_token,
     get_user_by_telegram_id,
     get_db
@@ -49,6 +50,11 @@ async def create_expense(expense: ExpenseCreate):
         receipt_meta=expense.receipt_meta
     )
     return {"success": True, "expense": record}
+
+@router.delete("/clear-all")
+async def clear_all_expenses(family_id: int = 1):
+    deleted_count = await delete_all_expenses(family_id)
+    return {"success": True, "message": "Все расходы успешно обнулены", "deleted_count": deleted_count}
 
 @router.delete("/{expense_id}")
 async def delete_expense(expense_id: int, family_id: int = 1):
